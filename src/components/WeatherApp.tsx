@@ -5,11 +5,11 @@ const WeatherApp = () => {
     return (
         <>
             <div>
-                <div>
+                <div className='flex items-center'>
                     <div className='text-[32px]'>Stockton, CA</div>
                     <img className="w-[41px]" src={StarIcon} alt="Star" />
                 </div>
-                <div>
+                <div className='flex items-center'>
                     <div className='flex items-center'>
                         <img className='w-[30px]' src={MagnifyingGlass} alt="Magnifying Glass" />
                         <input className='text-[18px]' type="text" placeholder="Search Location" />
