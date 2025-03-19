@@ -2,19 +2,23 @@ import StarIcon from '../../Assets/star-regular (1).svg'
 import MagnifyingGlass from '../../Assets/magnifying-glass-solid (1).svg'
 import Ellipsis from '../../Assets/ellipsis-solid.svg'
 import { get5DaysForcast } from './WeatherLogic'
-// import DATA from './data.json'
+import DATA from './data.json'
 import { APIkey } from './environment'
 import { useEffect, useState } from 'react'
 
 const WeatherApp = () => {
     let cityName = 'Stockton'
-    let key = '' // API key
+    let key = ''
     
     // Fetch weather data
     async function getWeatherData() {
         const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${key}&units=imperial`);
         const data = await response.json();
         return data;
+    }
+
+    async function agetWeatherData() {
+        return DATA;
     }
 
     // State for forecast
