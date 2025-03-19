@@ -7,24 +7,26 @@ import { APIkey } from './environment'
 import { useEffect, useState } from 'react'
 
 const WeatherApp = () => {
+    const [forecast, setForecast] = useState<any[]>([]);
+    const [cityName1, setCityName] = useState(''); // City name state
+
     let cityName = 'Stockton'
-    let key = '' //APIkey
+    let key = ''
 
     // Fetch weather data
     async function agetWeatherData() {
         const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${key}&units=imperial`);
         const data = await response.json();
         console.log(data);
+        setCityName(`${data.city.name}, ${data.city.country}`); // Update city name state
         return data;
     }
 
     async function getWeatherData() {
         console.log(DATA);
+        setCityName(`${DATA.city.name}, ${DATA.city.country}`); // Update city name state
         return DATA;
     }
-
-    // State for forecast
-    const [forecast, setForecast] = useState<any[]>([]);
 
     useEffect(() => {
         alert('Hello')
@@ -42,7 +44,7 @@ const WeatherApp = () => {
         <div className='w-[100%] h-screen bg-[#0E1323] text-[white] flex flex-col items-center justify-center'>
             <div className='w-[80%] h-[100px] p-7 rounded-[15px] flex justify-between bg-[#1C204B]'>
                 <div className='flex items-center'>
-                    <div className='text-[32px]'>Stockton, CA</div>
+                    <div className='text-[32px]'>{cityName1}</div>
                     <img className="w-[41px] invert brightness-0" src={StarIcon} alt="Star" />
                 </div>
                 <div className='flex items-center'>
