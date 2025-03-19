@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 
 const WeatherApp = () => {
     let cityName = 'Stockton'
-    let key = APIkey
+    let key = '' // API key
     
     // Fetch weather data
     async function getWeatherData() {
