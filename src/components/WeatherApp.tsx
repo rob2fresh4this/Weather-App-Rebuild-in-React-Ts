@@ -8,16 +8,18 @@ import { useEffect, useState } from 'react'
 
 const WeatherApp = () => {
     let cityName = 'Stockton'
-    let key = ''
-    
+    let key = '' //APIkey
+
     // Fetch weather data
-    async function getWeatherData() {
+    async function agetWeatherData() {
         const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${key}&units=imperial`);
         const data = await response.json();
+        console.log(data);
         return data;
     }
 
-    async function agetWeatherData() {
+    async function getWeatherData() {
+        console.log(DATA);
         return DATA;
     }
 
@@ -25,6 +27,7 @@ const WeatherApp = () => {
     const [forecast, setForecast] = useState<any[]>([]);
 
     useEffect(() => {
+        alert('Hello')
         async function fetchWeatherForecast() {
             const DATA = await getWeatherData();
             const forecastData = get5DaysForcast(DATA);

@@ -28,7 +28,7 @@ export function removeFromLocalStorage(CityORStat: string) {
 
 
 
-export function get5DaysForcast(data: any) {
+export function get5DaysForcast1(data: any) {
     let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     let today = new Date().getDay();
     let forecast = [];
@@ -40,5 +40,28 @@ export function get5DaysForcast(data: any) {
         let description = data.list[i].weather[0].description;
         forecast.push({ day, temp, temp_min, temp_max, description });
     }
+    return forecast;
+}
+
+export function get5DaysForcast(data: any) {
+    // Filter for forecast data at 12:00:00
+    const ForecastList = data.list.filter((item: { dt_txt: string }) => item.dt_txt.includes('12:00:00'));
+    let forecast = [];
+    // Loop to get data for the next 5 days
+    for (let i = 0; i < 5; i++) {
+        const forecastEntry = ForecastList[i];
+        // Ensure that forecast data exists
+        if (!forecastEntry) {
+            continue;
+        }
+
+        const day = new Date(forecastEntry.dt_txt).toLocaleString('en-US', { weekday: 'long' });
+        const temp = forecastEntry.main.temp;
+        const temp_min = forecastEntry.main.temp_min;
+        const temp_max = forecastEntry.main.temp_max;
+        const description = forecastEntry.weather[0].description;
+        forecast.push({ day, temp, temp_min, temp_max, description });
+    }
+
     return forecast;
 }
