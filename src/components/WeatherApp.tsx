@@ -1,45 +1,35 @@
 import StarIcon from '../../Assets/star-regular (1).svg'
 import MagnifyingGlass from '../../Assets/magnifying-glass-solid (1).svg'
 import Ellipsis from '../../Assets/ellipsis-solid.svg'
+import { get5DaysForcast } from './WeatherLogic'
+// import DATA from './data.json'
 import { APIkey } from './environment'
-import DATA from './data.json'
+import { useEffect, useState } from 'react'
 
 const WeatherApp = () => {
-
-
-    let apiKey = APIkey
     let cityName = 'Stockton'
-    async function getWeatherData() {// cityName: string
-        const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${apiKey}&units=imperial`);
+    let key = APIkey
+    
+    // Fetch weather data
+    async function getWeatherData() {
+        const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${key}&units=imperial`);
         const data = await response.json();
-        console.log(data)
         return data;
     }
 
-    // async function getWeatherData() {
-    //     const data = DATA
-    //     console.log(data)
-    //     return data
-    // }
+    // State for forecast
+    const [forecast, setForecast] = useState<any[]>([]);
 
-    getWeatherData()
-
-    function get5DaysForcast(data: any) {
-        let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-        let today = new Date().getDay()
-        let forcast = []
-        for (let i = 0; i < 5; i++) {
-            let day = days[(today + i) % 7]
-            let temp = data.list[i].main.temp
-            let temp_min = data.list[i].main.temp_min
-            let temp_max = data.list[i].main.temp_max
-            let description = data.list[i].weather[0].description
-            forcast.push({ day, temp, temp_min, temp_max, description })
+    useEffect(() => {
+        async function fetchWeatherForecast() {
+            const DATA = await getWeatherData();
+            const forecastData = get5DaysForcast(DATA);
+            setForecast(forecastData); // Update state with forecast
+            console.log(forecastData);
         }
-        return forcast
-    }
 
-    let forecast = get5DaysForcast(DATA)
+        fetchWeatherForecast(); // Fetch weather data on component mount
+    }, []);
 
     return (
         <div className='w-[100%] h-screen bg-[#0E1323] text-[white] flex flex-col items-center justify-center'>
@@ -73,7 +63,6 @@ const WeatherApp = () => {
                         <div className="flex justify-center items-center">{day.description}</div>
                     </div>
                 ))}
-
             </div>
 
             {/* saved locations */}
@@ -90,19 +79,4 @@ const WeatherApp = () => {
     )
 }
 
-export default WeatherApp
-
-
-
-{/* < div className='w-[19%] bg-[#1C204B] rounded-[15px] pt-[30px] pb-[25px] px-[30px]' >
-<div className='flex justify-between items-center'>
-    <div>Monday</div>
-    <img src={Ellipsis} className='w-[16px]' alt="3 dot" />
-</div>
-<div className='flex flex-col items-center mb-[15px]'>
-    <div className='text-[40px] pb-[20px]'>xxx°F</div>
-    <div>High - xxx°F</div>
-    <div>Low - xxx°F</div>
-</div>
-<div className='flex justify-center items-center'>Main Description</div>
-</div > */}
+export default WeatherApp;
