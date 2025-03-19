@@ -2,33 +2,44 @@ import StarIcon from '../../Assets/star-regular (1).svg'
 import MagnifyingGlass from '../../Assets/magnifying-glass-solid (1).svg'
 import Ellipsis from '../../Assets/ellipsis-solid.svg'
 import { APIkey } from './environment'
+import DATA from './data.json'
 
 const WeatherApp = () => {
+
 
     let apiKey = APIkey
     let cityName = 'Stockton'
     async function getWeatherData() {// cityName: string
         const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${apiKey}&units=imperial`);
         const data = await response.json();
+        console.log(data)
         return data;
     }
 
+    // async function getWeatherData() {
+    //     const data = DATA
+    //     console.log(data)
+    //     return data
+    // }
+
+    getWeatherData()
+
     function get5DaysForcast(data: any) {
-        let filteredData = [];
-        
-        for (let item of data.list) {
-            let dateTime = item.dt_txt; // Extract date-time string
-            if (dateTime.includes("12:00:00")) { // Check if it's noon
-                filteredData.push(item);
-            }
+        let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+        let today = new Date().getDay()
+        let forcast = []
+        for (let i = 0; i < 5; i++) {
+            let day = days[(today + i) % 7]
+            let temp = data.list[i].main.temp
+            let temp_min = data.list[i].main.temp_min
+            let temp_max = data.list[i].main.temp_max
+            let description = data.list[i].weather[0].description
+            forcast.push({ day, temp, temp_min, temp_max, description })
         }
-        return filteredData;
+        return forcast
     }
 
-    getWeatherData().then((data) => {
-        console.log(get5DaysForcast(data));
-    });
-
+    let forecast = get5DaysForcast(DATA)
 
     return (
         <div className='w-[100%] h-screen bg-[#0E1323] text-[white] flex flex-col items-center justify-center'>
@@ -48,30 +59,21 @@ const WeatherApp = () => {
             <br />
 
             <div className='w-[80%] flex justify-between'>
-                <div className='w-[19%] bg-[#1C204B] rounded-[15px] pt-[30px] pb-[25px] px-[30px]'>
-                    <div className='flex justify-between items-center'>
-                        <div>Monday</div>
-                        <img src={Ellipsis} className='w-[16px]' alt="3 dot" />
+                {forecast.map((day, index) => (
+                    <div key={index} className="w-[19%] bg-[#1C204B] rounded-[15px] pt-[30px] pb-[25px] px-[30px]">
+                        <div className="flex justify-between items-center">
+                            <div>{day.day}</div>
+                            <img src={Ellipsis} className="w-[16px]" alt="3 dot" />
+                        </div>
+                        <div className="flex flex-col items-center mb-[15px]">
+                            <div className="text-[40px] pb-[20px]">{day.temp}°F</div>
+                            <div>High - {day.temp_max}°F</div>
+                            <div>Low - {day.temp_min}°F</div>
+                        </div>
+                        <div className="flex justify-center items-center">{day.description}</div>
                     </div>
-                    <div className='flex flex-col items-center mb-[15px]'>
-                        <div className='text-[40px] pb-[20px]'>xxx°F</div>
-                        <div>High - xxx°F</div>
-                        <div>Low - xxx°F</div>
-                    </div>
-                    <div className='flex justify-center items-center'>Main Description</div>
-                </div>
-                <div className='w-[19%] bg-[#1C204B] rounded-[15px] p-3'>
-                    card 2
-                </div>
-                <div className='w-[19%] bg-[#1C204B] rounded-[15px] p-3'>
-                    card 3
-                </div>
-                <div className='w-[19%] bg-[#1C204B] rounded-[15px] p-3'>
-                    card 4
-                </div>
-                <div className='w-[19%] bg-[#1C204B] rounded-[15px] p-3'>
-                    card 5
-                </div>
+                ))}
+
             </div>
 
             {/* saved locations */}
@@ -89,3 +91,18 @@ const WeatherApp = () => {
 }
 
 export default WeatherApp
+
+
+
+{/* < div className='w-[19%] bg-[#1C204B] rounded-[15px] pt-[30px] pb-[25px] px-[30px]' >
+<div className='flex justify-between items-center'>
+    <div>Monday</div>
+    <img src={Ellipsis} className='w-[16px]' alt="3 dot" />
+</div>
+<div className='flex flex-col items-center mb-[15px]'>
+    <div className='text-[40px] pb-[20px]'>xxx°F</div>
+    <div>High - xxx°F</div>
+    <div>Low - xxx°F</div>
+</div>
+<div className='flex justify-center items-center'>Main Description</div>
+</div > */}
