@@ -26,42 +26,31 @@ export function removeFromLocalStorage(CityORStat: string) {
     }
 }
 
-
-
-export function get5DaysForcast1(data: any) {
-    let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    let today = new Date().getDay();
-    let forecast = [];
-    for (let i = 0; i < 5; i++) {
-        let day = days[(today + i) % 7];
-        let temp = data.list[i].main.temp;
-        let temp_min = data.list[i].main.temp_min;
-        let temp_max = data.list[i].main.temp_max;
-        let description = data.list[i].weather[0].description;
-        forecast.push({ day, temp, temp_min, temp_max, description });
-    }
-    return forecast;
-}
-
 export function get5DaysForcast(data: any) {
-    // Filter for forecast data at 12:00:00
-    const ForecastList = data.list.filter((item: { dt_txt: string }) => item.dt_txt.includes('12:00:00'));
     let forecast = [];
-    // Loop to get data for the next 5 days
-    for (let i = 0; i < 5; i++) {
-        const forecastEntry = ForecastList[i];
-        // Ensure that forecast data exists
-        if (!forecastEntry) {
-            continue;
+    let addedDays = new Set(); // Track unique days to avoid duplicates
+
+    for (let i = 0; i < data.list.length; i++) {
+        const forecastEntry = data.list[i];
+        const entryDate = new Date(forecastEntry.dt_txt);
+        const day = entryDate.toLocaleString('en-US', { weekday: 'long' });
+
+        // Ensure we get the first available forecast for today or 12:00 PM for other days
+        if (!addedDays.has(day) && (i === 0 || forecastEntry.dt_txt.includes('12:00:00'))) {
+            forecast.push({
+                day,
+                temp: forecastEntry.main.temp,
+                temp_min: forecastEntry.main.temp_min,
+                temp_max: forecastEntry.main.temp_max,
+                description: forecastEntry.weather[0].description,
+            });
+            addedDays.add(day);
         }
 
-        const day = new Date(forecastEntry.dt_txt).toLocaleString('en-US', { weekday: 'long' });
-        const temp = forecastEntry.main.temp;
-        const temp_min = forecastEntry.main.temp_min;
-        const temp_max = forecastEntry.main.temp_max;
-        const description = forecastEntry.weather[0].description;
-        forecast.push({ day, temp, temp_min, temp_max, description });
+        // Stop when we reach 5 days
+        if (forecast.length === 5) break;
     }
 
     return forecast;
 }
+
