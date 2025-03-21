@@ -27,7 +27,8 @@ Rebuild your weather app.
 #### Exercise or Lab Name  
 [Weather-App-Rebuild-in-React-Ts]
 
-## Peer Review:
+## Peer Review: Hassan Sajid
+- The project looks good and everything such as the search functionality, local storage, and the favorite functionality are all working accordingly. I like how the application takes your personal location to load in. Everything works, good job.
 
 # DONT FORGET INSTALL FOR SVG
 
