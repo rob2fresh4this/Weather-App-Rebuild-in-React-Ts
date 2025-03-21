@@ -184,13 +184,13 @@ const WeatherApp = () => {
             <div className='w-[90%] md:w-[80%] mt-[20px] bg-[#1C204B] rounded-[15px] p-7 '>
                 {getFromLocalStorage().map((city: string, index: number) => (
                     <div key={index}>
-                        <div className='flex justify-between items-center'>
-                            <div>{city}</div>
-                            <div>
-                                <button onClick={() => handleRemove(city)} className='bg-[#D9534F] text-white mr-3 hover:bg-red-700 px-4 py-2 rounded-[10px]'>
+                        <div className='flex flex-col md:justify-between items-center'>
+                            <div className='w-[100%] text-center'>{city}</div>
+                            <div className='w-[100%] flex md:justify-end'>
+                                <button onClick={() => handleRemove(city)} className='bg-[#D9534F] w-[50%] md:w-auto text-white mr-1 hover:bg-red-700 px-2 md:px-4 py-2 rounded-[10px]'>
                                     Remove
                                 </button>
-                                <button onClick={() => handleGo(city)} className='bg-[#009925] text-white hover:bg-green-700 px-7 py-2 rounded-[10px]'>
+                                <button onClick={() => handleGo(city)} className='bg-[#009925] w-[50%] md:w-auto text-white hover:bg-green-700 px-3 md:px-7 py-2 rounded-[10px]'>
                                     Go
                                 </button>
                             </div>
@@ -198,8 +198,8 @@ const WeatherApp = () => {
                         <br />
                     </div>
                 ))}
-
             </div>
+            
         </div>
     )
 }
