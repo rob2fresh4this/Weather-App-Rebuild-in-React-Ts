@@ -36,9 +36,9 @@ const WeatherApp = () => {
             return;
         }
 
-        const newData = await getWeatherData(usersInput); 
+        const newData = await getWeatherData(usersInput);
         if (newData) {
-            setForecast(get5DaysForcast(newData)); 
+            setForecast(get5DaysForcast(newData));
         }
     }
 
@@ -52,30 +52,30 @@ const WeatherApp = () => {
         const data = await getWeatherData(cityName);
         const city = data?.city.name + ', ' + data?.city.country;
 
-        if (!city) return;  
+        if (!city) return;
 
         const currentSavedCities = getFromLocalStorage();
 
         if (currentSavedCities.includes(city)) {
-            removeFromLocalStorage(city);  
+            removeFromLocalStorage(city);
             setSavedCities(currentSavedCities.filter((savedCity: any) => savedCity !== city));
         } else {
-            saveToLocalStorage(city);  
+            saveToLocalStorage(city);
             setSavedCities([...currentSavedCities, city]);
         }
     }
 
     const handleGo = async (city: string) => {
-        setUsersInput(city);  
-        const newData = await getWeatherData(city);  
+        setUsersInput(city);
+        const newData = await getWeatherData(city);
         if (newData) {
-            setForecast(get5DaysForcast(newData)); 
+            setForecast(get5DaysForcast(newData));
         }
     };
 
     const handleRemove = (city: string) => {
-        removeFromLocalStorage(city); 
-        setSavedCities(savedCities.filter((savedCity) => savedCity !== city));  
+        removeFromLocalStorage(city);
+        setSavedCities(savedCities.filter((savedCity) => savedCity !== city));
     };
 
     let starColor = isFavorite
@@ -126,8 +126,9 @@ const WeatherApp = () => {
 
 
     return (
-        <div className='w-[100%] h-screen bg-[#0E1323] text-[white] flex flex-col items-center justify-center'>
-            <div className='w-[80%] h-[100px] p-7 rounded-[15px] flex justify-between bg-[#1C204B]'>
+        <div className='w-[100%] md:h-screen bg-[#0E1323] text-[white] flex flex-col items-center justify-center'>
+            <br className='block md:hidden' />
+            <div className='w-[90%] md:w-[80%]  md:h-[100px] p-7 rounded-[15px] flex flex-col md:flex-row justify-between bg-[#1C204B]'>
                 <div className='flex items-center justify-between w-[100%] mr-4'>
                     <div className='text-[32px]'>{cityName}</div>
                     {/* STAR ICON */}
@@ -139,11 +140,11 @@ const WeatherApp = () => {
                         onClick={handleSave}
                     />
                 </div>
-                <div className='flex items-center'>
-                    <div className='flex items-center bg-white border-[3px] border-[#5747EA] px-[10px] w-[330px] h-[50px] rounded-[15px]'>
-                        <img className='w-[30px]' src={MagnifyingGlass} alt="Magnifying Glass" />
+                <div className='flex md:flex-row flex-col items-center mt-2 md:mt-0'>
+                    <div className='flex items-center overflow-hidden bg-white border-[3px] border-[#5747EA] mb-3 md:mb-0 px-[10px] w-[100%] md:w-[330px] h-[50px] rounded-[15px]'>
+                        <img className='w-[25px] md:w-[30px]' src={MagnifyingGlass} alt="Magnifying Glass" />
                         <input
-                            className="text-[18px] border-none text-[#7078C9] focus:outline-none focus:ring-0"
+                            className="text-[18px] md:w-[330px] w-auto border-none text-[#7078C9] focus:outline-none focus:ring-0"
                             type="text"
                             placeholder="Search Location"
                             value={usersInput}
@@ -151,30 +152,36 @@ const WeatherApp = () => {
                             onChange={(e) => setUsersInput(e.target.value)}
                         />
                     </div>
-                    <button onClick={handleSearch} className='bg-[#0D6EFD] text-white hover:bg-blue-700 px-7 py-3 ml-4 rounded-[10px]'>Search</button>
+                    <button onClick={handleSearch} className='bg-[#0D6EFD] w-[100%] md:w-auto text-white hover:bg-blue-700 px-7 py-3 md:ml-4 rounded-[10px]'>Search</button>
                 </div>
             </div>
             <br />
 
-            <div className='w-[80%] flex justify-between'>
-                {forecast.map((day, index) => (
-                    <div key={index} className="w-[19%] bg-[#1C204B] rounded-[15px] pt-[30px] pb-[25px] px-[30px]">
-                        <div className="flex justify-between items-center">
-                            <div>{day.day}</div>
-                            <img src={Ellipsis} className="w-[16px]" alt="3 dot" />
+            <div className='w-[90%] md:w-[80%] flex justify-between'>
+                <div className="w-[100%] flex flex-wrap justify-between">
+                    {forecast.map((day, index) => (
+                        <div
+                            key={index}
+                            className="w-full md:w-[19%] bg-[#1C204B] rounded-[15px] pt-[30px] pb-[25px] px-[30px] md:mb-0 mb-3"
+                        >
+                            <div className="flex justify-between items-center">
+                                <div>{day.day}</div>
+                                <img src={Ellipsis} className="w-[16px]" alt="3 dot" style={{ filter: 'invert(75%) sepia(20%) saturate(500%) hue-rotate(220deg)' }} onClick={() => alert(`yay you pressed me`)} />
+                            </div>
+                            <div className="flex flex-col items-center mb-[15px]">
+                                <div className="text-[40px] pb-[20px]">{day.temp}°F</div>
+                                <div>High - {day.temp_max}°F</div>
+                                <div>Low - {day.temp_min}°F</div>
+                            </div>
+                            <div className="flex justify-center items-center">{day.description}</div>
                         </div>
-                        <div className="flex flex-col items-center mb-[15px]">
-                            <div className="text-[40px] pb-[20px]">{day.temp}°F</div>
-                            <div>High - {day.temp_max}°F</div>
-                            <div>Low - {day.temp_min}°F</div>
-                        </div>
-                        <div className="flex justify-center items-center">{day.description}</div>
-                    </div>
-                ))}
+                    ))}
+                </div>
+
             </div>
 
             {/* saved locations */}
-            <div className='w-[80%] mt-[20px] bg-[#1C204B] rounded-[15px] p-7 '>
+            <div className='w-[90%] md:w-[80%] mt-[20px] bg-[#1C204B] rounded-[15px] p-7 '>
                 {getFromLocalStorage().map((city: string, index: number) => (
                     <div key={index}>
                         <div className='flex justify-between items-center'>
