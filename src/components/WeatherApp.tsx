@@ -1,7 +1,7 @@
 import StarIcon from '../../Assets/star-regular (1).svg'
 import MagnifyingGlass from '../../Assets/magnifying-glass-solid (1).svg'
 import Ellipsis from '../../Assets/ellipsis-solid.svg'
-import { get5DaysForcast } from './WeatherLogic'
+import { get5DaysForcast, getFromLocalStorage, saveToLocalStorage, removeFromLocalStorage } from './WeatherLogic'
 import DATA from './data.json'
 import { APIkey } from './environment'
 import { useEffect, useState } from 'react'
@@ -10,8 +10,11 @@ const WeatherApp = () => {
     const [forecast, setForecast] = useState<any[]>([]);
     const [cityName, setCityName] = useState('');
     const [usersInput, setUsersInput] = useState('');
+    const [savedCities, setSavedCities] = useState<string[]>(getFromLocalStorage());
+    const isFavorite = savedCities.includes(cityName);  // Check if city is saved
 
-    let key: string = APIkey; // Ensure key is always assigned
+
+    let key: string = APIkey;
 
     async function getWeatherData(city: string) {
         const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${key}&units=imperial`);
@@ -45,7 +48,51 @@ const WeatherApp = () => {
         }
     };
 
+    async function handleSave() {
+        const data = await getWeatherData(cityName);
+        const city = data?.city.name + ', ' + data?.city.country;
+
+        if (!city) return;  // Ensure city exists before processing
+
+        const currentSavedCities = getFromLocalStorage();
+
+        if (currentSavedCities.includes(city)) {
+            removeFromLocalStorage(city);  // Remove city if already saved
+            setSavedCities(currentSavedCities.filter((savedCity: any) => savedCity !== city));
+        } else {
+            saveToLocalStorage(city);  // Add city if not saved
+            setSavedCities([...currentSavedCities, city]);
+        }
+    }
+
+    const handleGo = async (city: string) => {
+        setUsersInput(city);  // Set the input field to the selected city
+        const newData = await getWeatherData(city);  // Get weather data for the city
+        if (newData) {
+            setForecast(get5DaysForcast(newData));  // Update forecast with new data
+        }
+    };
+
+    const handleRemove = (city: string) => {
+        removeFromLocalStorage(city);  // Remove city from local storage
+        setSavedCities(savedCities.filter((savedCity) => savedCity !== city));  // Remove city from state
+    };
+
+    let starColor = isFavorite
+        ? 'invert(40%) sepia(100%) saturate(500%) hue-rotate(20deg)'
+        : 'invert(60%) sepia(20%) saturate(100%) hue-rotate(200deg)';
+
+
     useEffect(() => {
+        const cities = getFromLocalStorage();
+        setSavedCities(cities);
+    }, [cityName]);
+
+
+
+
+    useEffect(() => {
+        // alert(`stop burining my api key`);
         navigator.geolocation.getCurrentPosition(success, error);
 
         function success(position: any) {
@@ -83,7 +130,14 @@ const WeatherApp = () => {
             <div className='w-[80%] h-[100px] p-7 rounded-[15px] flex justify-between bg-[#1C204B]'>
                 <div className='flex items-center justify-between w-[100%] mr-4'>
                     <div className='text-[32px]'>{cityName}</div>
-                    <img className="w-[41px] invert brightness-0" src={StarIcon} alt="Star" />
+                    {/* STAR ICON */}
+                    <img
+                        className="w-[41px]"
+                        style={{ filter: starColor }}
+                        src={StarIcon}
+                        alt="Star"
+                        onClick={handleSave}
+                    />
                 </div>
                 <div className='flex items-center'>
                     <div className='flex items-center bg-white border-[3px] border-[#5747EA] px-[10px] w-[330px] h-[50px] rounded-[15px]'>
@@ -121,13 +175,23 @@ const WeatherApp = () => {
 
             {/* saved locations */}
             <div className='w-[80%] mt-[20px] bg-[#1C204B] rounded-[15px] p-7 '>
-                <div className='flex justify-between items-center'>
-                    <div>Stockton, CA</div>
-                    <div>
-                        <button className='bg-[#D9534F] text-white hover:bg-red-700 px-4 py-2 rounded-[10px]'>Remove</button>
-                        <button className='bg-[#009925] text-white hover:bg-green-700 px-7 py-2 rounded-[10px]'>Go</button>
+                {getFromLocalStorage().map((city: string, index: number) => (
+                    <div key={index}>
+                        <div className='flex justify-between items-center'>
+                            <div>{city}</div>
+                            <div>
+                                <button onClick={() => handleRemove(city)} className='bg-[#D9534F] text-white mr-3 hover:bg-red-700 px-4 py-2 rounded-[10px]'>
+                                    Remove
+                                </button>
+                                <button onClick={() => handleGo(city)} className='bg-[#009925] text-white hover:bg-green-700 px-7 py-2 rounded-[10px]'>
+                                    Go
+                                </button>
+                            </div>
+                        </div>
+                        <br />
                     </div>
-                </div>
+                ))}
+
             </div>
         </div>
     )

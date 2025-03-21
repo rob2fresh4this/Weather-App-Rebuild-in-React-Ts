@@ -39,9 +39,9 @@ export function get5DaysForcast(data: any) {
         if (!addedDays.has(day) && (i === 0 || forecastEntry.dt_txt.includes('12:00:00'))) {
             forecast.push({
                 day,
-                temp: forecastEntry.main.temp,
-                temp_min: forecastEntry.main.temp_min,
-                temp_max: forecastEntry.main.temp_max,
+                temp: roundCustom(forecastEntry.main.temp),
+                temp_min: roundCustom(forecastEntry.main.temp_min),
+                temp_max: roundCustom(forecastEntry.main.temp_max),
                 description: forecastEntry.weather[0].description,
             });
             addedDays.add(day);
@@ -53,4 +53,10 @@ export function get5DaysForcast(data: any) {
 
     return forecast;
 }
+
+// Custom rounding function
+function roundCustom(num: number): number {
+    return (num % 1 > 0.4) ? Math.ceil(num) : Math.floor(num);
+}
+
 
