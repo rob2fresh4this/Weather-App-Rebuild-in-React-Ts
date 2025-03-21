@@ -36,9 +36,9 @@ const WeatherApp = () => {
             return;
         }
 
-        const newData = await getWeatherData(usersInput); // Ensure we await data
+        const newData = await getWeatherData(usersInput); 
         if (newData) {
-            setForecast(get5DaysForcast(newData)); // Update state only if data is valid
+            setForecast(get5DaysForcast(newData)); 
         }
     }
 
@@ -52,30 +52,30 @@ const WeatherApp = () => {
         const data = await getWeatherData(cityName);
         const city = data?.city.name + ', ' + data?.city.country;
 
-        if (!city) return;  // Ensure city exists before processing
+        if (!city) return;  
 
         const currentSavedCities = getFromLocalStorage();
 
         if (currentSavedCities.includes(city)) {
-            removeFromLocalStorage(city);  // Remove city if already saved
+            removeFromLocalStorage(city);  
             setSavedCities(currentSavedCities.filter((savedCity: any) => savedCity !== city));
         } else {
-            saveToLocalStorage(city);  // Add city if not saved
+            saveToLocalStorage(city);  
             setSavedCities([...currentSavedCities, city]);
         }
     }
 
     const handleGo = async (city: string) => {
-        setUsersInput(city);  // Set the input field to the selected city
-        const newData = await getWeatherData(city);  // Get weather data for the city
+        setUsersInput(city);  
+        const newData = await getWeatherData(city);  
         if (newData) {
-            setForecast(get5DaysForcast(newData));  // Update forecast with new data
+            setForecast(get5DaysForcast(newData)); 
         }
     };
 
     const handleRemove = (city: string) => {
-        removeFromLocalStorage(city);  // Remove city from local storage
-        setSavedCities(savedCities.filter((savedCity) => savedCity !== city));  // Remove city from state
+        removeFromLocalStorage(city); 
+        setSavedCities(savedCities.filter((savedCity) => savedCity !== city));  
     };
 
     let starColor = isFavorite

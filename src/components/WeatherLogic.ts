@@ -9,26 +9,26 @@ export function getFromLocalStorage() {
 
 export function saveToLocalStorage(CityORStat: string) {
     console.log(`Saving ${CityORStat} to local storage`);
-    let getCityOrState = getFromLocalStorage(); // Get the current list
+    let getCityOrState = getFromLocalStorage(); 
     if (!getCityOrState.includes(CityORStat)) {
-        getCityOrState.push(CityORStat); // Add to the array if not already present
-        localStorage.setItem('CityORState', JSON.stringify(getCityOrState)); // Save updated list
+        getCityOrState.push(CityORStat); 
+        localStorage.setItem('CityORState', JSON.stringify(getCityOrState));
     }
 }
 
 export function removeFromLocalStorage(CityORStat: string) {
     console.log(`Removing ${CityORStat} from local storage`);
-    let getCityOrState = getFromLocalStorage(); // Get the current list
-    let index = getCityOrState.indexOf(CityORStat); // Find index of the item to remove
+    let getCityOrState = getFromLocalStorage();
+    let index = getCityOrState.indexOf(CityORStat); 
     if (index > -1) {
         getCityOrState.splice(index, 1); // Remove the item
-        localStorage.setItem('CityORState', JSON.stringify(getCityOrState)); // Save updated list
+        localStorage.setItem('CityORState', JSON.stringify(getCityOrState)); 
     }
 }
 
 export function get5DaysForcast(data: any) {
     let forecast = [];
-    let addedDays = new Set(); // Track unique days to avoid duplicates
+    let addedDays = new Set(); 
 
     for (let i = 0; i < data.list.length; i++) {
         const forecastEntry = data.list[i];
@@ -46,8 +46,6 @@ export function get5DaysForcast(data: any) {
             });
             addedDays.add(day);
         }
-
-        // Stop when we reach 5 days
         if (forecast.length === 5) break;
     }
 
